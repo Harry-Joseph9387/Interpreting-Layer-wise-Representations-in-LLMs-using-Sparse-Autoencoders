@@ -19,9 +19,9 @@
 
 - 	Sparse Autoencoder performs dimensionality reduction transforming dense representations into minimal-overlapping, interpretable features.
 - 	How the encoder is trained to do this is by using a decoder to reconstruct the hidden representation(input) so that loss can be calculated to evaluate the encoder’s ability to correctly map right neurons to the given pattern of input.
-- 	This is possible because of applying sparsity, here I have used topK.
-- 	What this does is that it limits the no. of neurons available for the decoder to reconstruct.
-- 	On backpropagating the error, only that limited neuron’s related weights that contribute to the error is updated.
+- 	This is possible because of applying sparsity, here I have used topK, which zeros out active neurons other than the topK.
+- 	What sparsity does is that it limits the no. of neurons available for the decoder to reconstruct.
+- 	On backpropagating the error, only those limited neuron’s related weights, that contribute to the error, is updated.
 - 	This forces the encoder to activate different neurons for different pattern of input.
 
 
