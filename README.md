@@ -8,10 +8,10 @@
 
 ## 🧩 Logic for determining Layer functionality 
 - Each layer processes the input to highlight some features.
-- 	For that we use sparse auto encoder that extracts each feature and assigns a label on the basis of most common label.
-- 	Then we conclude features as the layer’s functionalities if the computed consistency of those features label passes the threshold.
-- 	This is done for all tasks thus getting prime features in relation with layers,
-- 	To determine the layer functionality we compute the mutual information
+- 	For that we use sparse auto encoder that extracts features from hidden representation and assigns a label on the basis of most commonly occuring.
+- 	Then we conclude highly consistent features as the layer’s functionalities.
+- 	This is done for all tasks (pos-tags,ner,dep) thus getting highly consistent features from each tasks
+- 	To determine the layer functionality across the tasks, we compute the mutual information between the hidden representation and labels to determine the most related labels 
 
 ---
 
