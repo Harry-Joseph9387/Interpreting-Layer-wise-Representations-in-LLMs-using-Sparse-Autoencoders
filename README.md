@@ -2,40 +2,28 @@
 
 ## 🎯 Aim
 
-This project aims to **identify the functionality of each layer** in a large language model (LLM) by analyzing its hidden representations. By doing so, we explore the *interpretability* of LLMs and understand *what each layer learns*.
+- 	To identify functionality of each layer from its hidden representation.
 
 ---
 
-## 🧩 Core Idea
-
-Each layer in an LLM processes the input to emphasize certain features. This project uses **Sparse Autoencoders (SAEs)** to extract and interpret those features. The basic flow:
-
-1. **Extract features** from each layer’s hidden representations using a sparse autoencoder.
-2. **Assign labels** to each extracted feature based on the most common label it aligns with.
-3. **Compute consistency** for the assigned labels.
-4. **Accept a feature as part of a layer's functionality** only if its consistency exceeds a certain threshold.
-5. **Repeat for all layers and tasks** to derive layer-wise functional mappings.
+## 🧩 Logic for determining Layer functionality 
+- Each layer processes the input to highlight some features.
+- 	For that we use sparse auto encoder that extracts each feature and assigns a label on the basis of most common label.
+- 	Then we conclude features as the layer’s functionalities if the computed consistency of those features label passes the threshold.
+- 	This is done for all tasks thus getting prime features in relation with layers,
+- 	To determine the layer functionality we compute the mutual information
 
 ---
 
 ## ⚙️ Working Principle
 
-- A **Sparse Autoencoder** reduces the dimensionality of dense LLM representations, transforming them into minimal-overlapping, interpretable features.
-- The **encoder** maps input (hidden representation) to a sparse latent vector, while the **decoder** reconstructs the input from it.
-- **Sparsity** is enforced using a **Top-K** mechanism that restricts the number of active neurons.
-- This encourages the encoder to:
-  - Use different neurons for different input patterns.
-  - Update only the relevant weights during backpropagation.
-- As a result, the encoder learns **distinct and interpretable neuron activations** that represent meaningful features from the LLM layer.
+- 	Sparse Autoencoder performs dimensionality reduction transforming dense representations into minimal-overlapping, interpretable features.
+- 	How the encoder is trained to do this is by using a decoder to reconstruct the hidden representation(input) so that loss can be calculated to evaluate the encoder’s ability to correctly map right neurons to the given pattern of input.
+- 	This is possible because of applying sparsity, here I have used topK.
+- 	What this does is that it limits the no. of neurons available for the decoder to reconstruct.
+- 	On backpropagating the error, only that limited neuron’s related weights that contribute to the error is updated.
+- 	This forces the encoder to activate different neurons for different pattern of input.
 
----
-
-## 📌 Method Summary
-
-- Train a separate sparse autoencoder for each LLM layer.
-- Evaluate and select features based on **label consistency**.
-- Use these features to interpret **what functionality a layer focuses on** (e.g., POS tagging, dependency parsing).
-- Generalize across multiple tasks to find **prime features per layer**.
 
 ---
 
@@ -48,16 +36,3 @@ Each layer in an LLM processes the input to emphasize certain features. This pro
 
 ---
 
-
-## 🛠 Requirements
-
-- Python 3.8+
-- PyTorch
-- NumPy
-- scikit-learn
-- Matplotlib
-
-Install dependencies using:
-
-```bash
-pip install -r requirements.txt
