@@ -36,3 +36,13 @@
 
 ---
 
+### Base Paper Reference 
+
+**"Sparse Autoencoders Find Highly Interpretable Features in Language Models" — Hoagy Cunningham et al. (2023)**
+
+- This paper addresses *polysemanticity* in neural networks—where neurons respond to multiple unrelated features—by proposing sparse autoencoders to disentangle these features into more interpretable directions.
+- The authors use *sparse dictionary learning* to identify directions in activation space that reconstruct model activations using a small set of highly interpretable, monosemantic features.
+- Their method improves interpretability over traditional methods like PCA and ICA, validated using *autointerpretability scores* and *causal interventions* (like activation patching).
+- Case studies demonstrate that individual learned features correspond to specific linguistic patterns (e.g., apostrophes or legal terms), enabling detailed tracing of model behaviour through internal circuits.
+
+*Paper Link*: [arXiv:2309.08600v3](https://arxiv.org/abs/2309.08600)
