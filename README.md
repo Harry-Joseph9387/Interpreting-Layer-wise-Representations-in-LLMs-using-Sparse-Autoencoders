@@ -36,7 +36,7 @@
 - Educational insight into **representation learning**
 
 ---
-# ✅ Pros and ❌ Cons
+## ✅ Pros and ❌ Cons
 ## ✅ Pros
 ### Improved Interpretability through Disentanglement
 
@@ -47,6 +47,8 @@
 ### Limited Effectiveness in Deeper Layers
 
 -Struggles to interpret deep, abstract representations where polysemanticity and entanglement are high.
+
+---
 
 ### Base Paper Reference 
 
