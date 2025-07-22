@@ -36,15 +36,15 @@
 - Educational insight into **representation learning**
 
 ---
-### ✅ Pros and ❌ Cons
+# ✅ Pros and ❌ Cons
 ## ✅ Pros
-# Improved Interpretability through Disentanglement
+### Improved Interpretability through Disentanglement
 
 -Encourages neurons to specialize in specific, meaningful patterns (e.g., syntax, punctuation), making them easier to interpret.
 
 ## ❌ Cons
 
-# Limited Effectiveness in Deeper Layers
+### Limited Effectiveness in Deeper Layers
 
 -Struggles to interpret deep, abstract representations where polysemanticity and entanglement are high.
 
