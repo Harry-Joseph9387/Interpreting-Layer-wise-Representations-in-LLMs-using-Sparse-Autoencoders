@@ -18,6 +18,7 @@
 ## ⚙️ Working Principle
 
 - 	Sparse Autoencoder performs dimensionality reduction transforming dense representations into minimal-overlapping, interpretable features.
+- 	The encoder represents interpretable features by activating distinct sparse neurons that each respond to specific, human-understandable patterns in the input.
 - 	How the encoder is trained to do this is by using a decoder to reconstruct the hidden representation(input) so that loss can be calculated to evaluate the encoder’s ability to correctly map right neurons to the given pattern of input.
 - 	This is possible because of applying sparsity, here I have used topK, which zeros out active neurons other than the topK.
 - 	What sparsity does is that it limits the no. of neurons available for the decoder to reconstruct.
