@@ -43,17 +43,9 @@
 1. **Improved Interpretability through Disentanglement**  
    - Encourages neurons to specialize in specific, meaningful patterns (e.g., syntax, punctuation), making them easier to interpret.
 
-2. **Post-hoc Flexibility**  
-   - Can be trained on frozen activations from any model layer, without needing to modify or retrain the base model.
-
 ### ❌ Cons
-1. **Bias Toward Common Features**  
-   - Learns features mostly aligned with dominant labels like “O”, limiting its ability to capture rare or nuanced patterns.
-
-2. **Limited Effectiveness in Deeper Layers**  
+1. **Limited Effectiveness in Deeper Layers**  
    - Struggles to interpret deep, abstract representations where polysemanticity and entanglement are high.
-
----
 
 ---
 
