@@ -36,17 +36,24 @@
 - Educational insight into **representation learning**
 
 ---
+
 ## ✅ Pros and ❌ Cons
-## ✅ Pros
-### Improved Interpretability through Disentanglement
 
--Encourages neurons to specialize in specific, meaningful patterns (e.g., syntax, punctuation), making them easier to interpret.
+### ✅ Pros
+1. **Improved Interpretability through Disentanglement**  
+   - Encourages neurons to specialize in specific, meaningful patterns (e.g., syntax, punctuation), making them easier to interpret.
 
-## ❌ Cons
+2. **Post-hoc Flexibility**  
+   - Can be trained on frozen activations from any model layer, without needing to modify or retrain the base model.
 
-### Limited Effectiveness in Deeper Layers
+### ❌ Cons
+1. **Bias Toward Common Features**  
+   - Learns features mostly aligned with dominant labels like “O”, limiting its ability to capture rare or nuanced patterns.
 
--Struggles to interpret deep, abstract representations where polysemanticity and entanglement are high.
+2. **Limited Effectiveness in Deeper Layers**  
+   - Struggles to interpret deep, abstract representations where polysemanticity and entanglement are high.
+
+---
 
 ---
 
