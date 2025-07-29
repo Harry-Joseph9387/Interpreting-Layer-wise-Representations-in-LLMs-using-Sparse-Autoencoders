@@ -37,6 +37,26 @@
 - Tokenizers are used to split sentences into subword tokens. Hidden states are collected only for valid tokens, skipping special tokens like [CLS], [SEP], and padding tokens.
 - Final token-wise hidden states are batched, aligned, and stored layer-wise. Aligned metadata (token, label, sentence index, token index) is also generated for further interpretability and mutual information filtering.
 ---
+## 🔍 SAE Layer-Wise Feature Interpretability Summary on DISTIL-BERT
+- A total of 6 layers were analyzed for both POS and DEP tasks, extracting the top 10 most interpretable features per layer using SAE activation vectors.
+- ### POS task findings:
+   -  Early layers (Layer 0–1) were dominated by ADV (adverbs) and PROPN (proper nouns).
+   -  Mid layers (Layer 2–3) shifted toward stronger representation of PROPN, indicating positional specialization.
+   -  Deeper layers (Layer 4–5) remained focused on PROPN with occasional contributions from ADV and NOUN.
+   -  POS labels like VERB and ADJ were detected but not dominant in any layer.
+- ### DEP task findings:
+   - Across all 6 layers, FUNC (function words like case markers, auxiliaries) was consistently the dominant category.
+   - Some layers also captured CLAUSE_LINK, COORD, and ROOT dependencies, indicating layered syntactic specialization.
+   - Deeper layers showed minimal shift in dominant label, maintaining a strong focus on grammatical relations.
+- ### Global Summary Across Tasks:
+   - Layer 0–1 focused on ADV, FUNC, and CLAUSE_LINK patterns.
+   - Layer 2–5 increasingly emphasized FUNC and PROPN as dominant labels.
+   - This suggests that mid-to-deep SAE layers encode rich information about function words and proper nouns, which are key to structure and entity recognition.
+- Each SAE layer specializes in distinct linguistic patterns, and this specialization emerges more clearly in mid-to-deep layers (Layer 2–5), supporting their interpretability for linguistic probing.
+
+
+
+---
 
 ## 🔍 Use Cases
 
