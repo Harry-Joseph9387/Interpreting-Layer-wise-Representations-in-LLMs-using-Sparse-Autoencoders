@@ -24,8 +24,18 @@
 - 	What sparsity does is that it limits the no. of neurons available for the decoder to reconstruct.
 - 	On backpropagating the error, only those limited neuron’s related weights, that contribute to the error, is updated.
 - 	This forces the encoder to activate different neurons for different pattern of input.
-
-
+---
+##🔧 Dataset Preparation & Feature Extraction
+- The dataset is sourced from multiple Universal Dependencies .conllu files using publicly available links. Each file contains annotated sentences with POS and dependency labels.
+- Tokens are filtered to exclude noisy or irrelevant content such as short tokens, repeated characters, URLs, non-alphabetic characters, punctuation-only tokens, and hashtags.
+- Since performing at token level, sentences are preserved in a way that each word-label pair is unique within each task data
+- POS tags are grouped into content categories (NOUN, VERB, ADJ, etc.) and a combined GRAMMAR category for function words using a predefined POS_GROUPS mapping.
+- Dependency relations are also grouped into broader categories like ARGUMENT, MODIFIER, FUNC, COORD, CLAUSE_LINK, and others using the DEP_GROUPS mapping
+- The script ensures label balance by filtering (word, label) pairs such that each label (per task) appears no more than max_per_label[task] times. This count is manually specified and used for all tasks.
+- Sentences and their associated POS/DEP labels are aligned and prepared for model input.
+- For representation extraction, the pre-trained model's hidden states from all layers (excluding embeddings) are extracted for each token in the dataset
+- Tokenizers are used to split sentences into subword tokens. Hidden states are collected only for valid tokens, skipping special tokens like [CLS], [SEP], and padding tokens.
+- Final token-wise hidden states are batched, aligned, and stored layer-wise. Aligned metadata (token, label, sentence index, token index) is also generated for further interpretability and mutual information filtering.
 ---
 
 ## 🔍 Use Cases
