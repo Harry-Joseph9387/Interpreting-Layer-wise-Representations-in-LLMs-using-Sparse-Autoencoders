@@ -25,7 +25,7 @@
 - 	On backpropagating the error, only those limited neuron’s related weights, that contribute to the error, is updated.
 - 	This forces the encoder to activate different neurons for different pattern of input.
 ---
-##🔧 Dataset Preparation & Feature Extraction
+## 🔧 Dataset Preparation & Feature Extraction
 - The dataset is sourced from multiple Universal Dependencies .conllu files using publicly available links. Each file contains annotated sentences with POS and dependency labels.
 - Tokens are filtered to exclude noisy or irrelevant content such as short tokens, repeated characters, URLs, non-alphabetic characters, punctuation-only tokens, and hashtags.
 - Since performing at token level, sentences are preserved in a way that each word-label pair is unique within each task data
