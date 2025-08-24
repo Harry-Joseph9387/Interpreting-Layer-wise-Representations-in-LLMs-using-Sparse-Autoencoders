@@ -2,68 +2,83 @@
 
 ## 🎯 Aim
 
-- 	To identify functionality of each layer from its hidden representation.
+- To identify the functionality of each transformer layer from its hidden representations by using **Sparse Autoencoders (SAEs)** and label-based interpretation.
 
 ---
 
-## 🧩 Logic for determining Layer functionality 
-- Each layer processes the input to highlight some features.
-- 	For that we use sparse auto encoder that extracts features from hidden representation and assigns a label on the basis of most commonly occuring.
-- 	Then we conclude highly consistent features as the layer’s functionalities.
-- 	This is done for all tasks (pos-tags,ner,dep) thus getting highly consistent features from each tasks
-- 	To determine the layer functionality across the tasks, we compute the mutual information between the hidden representation and labels to determine the most related labels 
+## 🧩 Logic for Determining Layer Functionality
+
+1. **Resolving Token–Label Ambiguity (Mutual Information Filtering)**  
+   - Some tokens can appear with multiple labels (e.g., *bank* → *finance*, *river*).  
+   - We group activation vectors by token and compute **mutual information (MI)** between activations and candidate labels.  
+   - The label with the **highest MI score** is chosen, ensuring the most explainable label is retained for each token.
+
+2. **Per Task Neuron Interpretation**  
+   - For each neuron (feature index), strong activations are defined as those above the 90th percentile.  
+   - Neurons with fewer than **5 strong activations** are ignored.  
+   - The **dominant label** for a neuron is the most frequent label among its strong activations.  
+   - **Consistency** = (# of activations for the dominant label) ÷ (total strong activations).  
+   - Highly consistent neurons are treated as interpretable, revealing **task-specific layer functionality**.
+
+3. **Across Task Layer Interpretation**  
+   - Each neuron contributes a **dominant label per task**, based on per-task consistency.  
+   - Across tasks, layers are summarized by the **most frequent dominant labels** across all tasks.  
+   - This highlights whether layers encode **shared linguistic functions** (e.g., function words, syntax) or **task-specific roles**.
 
 ---
 
 ## ⚙️ Working Principle
 
-- 	Sparse Autoencoder performs dimensionality reduction transforming dense representations into minimal-overlapping, interpretable features.
-- 	The encoder represents interpretable features by activating distinct sparse neurons that each respond to specific, human-understandable patterns in the input.
-- 	How the encoder is trained to do this is by using a decoder to reconstruct the hidden representation(input) so that loss can be calculated to evaluate the encoder’s ability to correctly map right neurons to the given pattern of input.
-- 	This is possible because of applying sparsity, here I have used topK, which zeros out active neurons other than the topK.
-- 	What sparsity does is that it limits the no. of neurons available for the decoder to reconstruct.
-- 	On backpropagating the error, only those limited neuron’s related weights, that contribute to the error, is updated.
-- 	This forces the encoder to activate different neurons for different pattern of input.
+- Sparse Autoencoder performs **dimensionality reduction**, transforming dense hidden states into minimal-overlapping, interpretable features.  
+- The encoder activates sparse neurons, each tuned to specific linguistic patterns.  
+- A decoder reconstructs the hidden representation, enforcing the encoder to use only the most relevant neurons.  
+- Sparsity is enforced using **TopK**, which zeroes out all but the top-K activations, ensuring distinct neurons specialize in distinct patterns.  
+- This leads to disentangled features, improving interpretability of the model’s internal representations.
+
 ---
+
 ## 🔧 Dataset Preparation & Feature Extraction
-- The dataset is sourced from multiple Universal Dependencies .conllu files using publicly available links. Each file contains annotated sentences with POS and dependency labels.
-- Tokens are filtered to exclude noisy or irrelevant content such as short tokens, repeated characters, URLs, non-alphabetic characters, punctuation-only tokens, and hashtags.
-- Since performing at token level, sentences are preserved in a way that each word-label pair is unique within each task data
-- POS tags are grouped into content categories (NOUN, VERB, ADJ, etc.) and a combined GRAMMAR category for function words using a predefined POS_GROUPS mapping.
-- Dependency relations are also grouped into broader categories like ARGUMENT, MODIFIER, FUNC, COORD, CLAUSE_LINK, and others using the DEP_GROUPS mapping
-- The script ensures label balance by filtering (word, label) pairs such that each label (per task) appears no more than max_per_label[task] times. This count is manually specified and used for all tasks.
-- Sentences and their associated POS/DEP labels are aligned and prepared for model input.
-- For representation extraction, the pre-trained model's hidden states from all layers (excluding embeddings) are extracted for each token in the dataset
-- Tokenizers are used to split sentences into subword tokens. Hidden states are collected only for valid tokens, skipping special tokens like [CLS], [SEP], and padding tokens.
-- Final token-wise hidden states are batched, aligned, and stored layer-wise. Aligned metadata (token, label, sentence index, token index) is also generated for further interpretability and mutual information filtering.
+
+- Dataset: Universal Dependencies `.conllu` files (POS and dependency annotations).  
+- Tokens are cleaned: remove short tokens, repeats, URLs, non-alphabetic characters, punctuation-only tokens, and hashtags.  
+- POS tags are grouped into content categories (e.g., NOUN, VERB, ADJ) and a GRAMMAR category for function words.  
+- Dependency relations are grouped into ARGUMENT, MODIFIER, FUNC, COORD, CLAUSE_LINK, etc.  
+- Label balance is ensured by limiting max occurrences per label.  
+- Hidden states from all transformer layers are extracted at the token level, excluding special tokens (`[CLS]`, `[SEP]`, padding).  
+- Metadata (token, label, sentence index, token index) is aligned for interpretability and MI-based filtering.
+
 ---
-## 🔍 SAE Layer-Wise Feature Interpretability Summary on DISTIL-BERT
-- A total of 6 layers were analyzed for both POS and DEP tasks, extracting the top 10 most interpretable features per layer using SAE activation vectors.
-- ### POS task findings:
-   -  Early layers (Layer 0–1) were dominated by ADV (adverbs) and PROPN (proper nouns).
-   -  Mid layers (Layer 2–3) shifted toward stronger representation of PROPN, indicating positional specialization.
-   -  Deeper layers (Layer 4–5) remained focused on PROPN with occasional contributions from ADV and NOUN.
-   -  POS labels like VERB and ADJ were detected but not dominant in any layer.
-- ### DEP task findings:
-   - Across all 6 layers, FUNC (function words like case markers, auxiliaries) was consistently the dominant category.
-   - Some layers also captured CLAUSE_LINK, COORD, and ROOT dependencies, indicating layered syntactic specialization.
-   - Deeper layers showed minimal shift in dominant label, maintaining a strong focus on grammatical relations.
-- ### Global Summary Across Tasks:
-   - Layer 0–1 focused on ADV, FUNC, and CLAUSE_LINK patterns.
-   - Layer 2–5 increasingly emphasized FUNC and PROPN as dominant labels.
-   - This suggests that mid-to-deep SAE layers encode rich information about function words and proper nouns, which are key to structure and entity recognition.
-- Each SAE layer specializes in distinct linguistic patterns, and this specialization emerges more clearly in mid-to-deep layers (Layer 2–5), supporting their interpretability for linguistic probing.
 
+## 🔍 SAE Layer-Wise Feature Interpretability Summary (DistilBERT)
 
+- **6 layers analyzed** for POS and DEP tasks.  
+- Extracted **top-10 interpretable neurons per layer** using SAE activations.
+
+### POS Task Findings
+- Early layers (0–1) were dominated by **ADV** (adverbs) and **PROPN** (proper nouns).  
+- Mid layers (2–3) shifted toward stronger representation of **PROPN**, showing positional specialization.  
+- Deeper layers (4–5) remained focused on **PROPN** with occasional **ADV** and **NOUN** signals.  
+- **VERB** and **ADJ** were detected but not dominant.
+
+### DEP Task Findings
+- Across all 6 layers, **FUNC** (function words: case markers, auxiliaries) was consistently dominant.  
+- Some layers also captured **CLAUSE_LINK**, **COORD**, and **ROOT** dependencies.  
+- Deeper layers maintained strong focus on grammatical relations with minimal shift in dominance.
+
+### Global Summary Across Tasks
+- Layers 0–1 emphasized **ADV**, **FUNC**, and **CLAUSE_LINK** patterns.  
+- Layers 2–5 increasingly emphasized **FUNC** and **PROPN** as dominant labels.  
+- Suggests mid-to-deep SAE layers encode rich information about **function words** and **proper nouns**, key to structure and entity recognition.  
+- Each SAE layer specializes in distinct linguistic patterns, with clearer specialization emerging in mid-to-deep layers (2–5).  
 
 ---
 
 ## 🔍 Use Cases
 
-- **Model interpretability** in research
-- **Debugging** and optimizing deep transformer architectures
-- Understanding **layer specialization** in LLMs
-- Educational insight into **representation learning**
+- **Model interpretability** in research  
+- **Debugging** and optimizing deep transformer architectures  
+- Understanding **layer specialization** in LLMs  
+- Educational insight into **representation learning**  
 
 ---
 
@@ -79,13 +94,13 @@
 
 ---
 
-### Base Paper Reference 
+### 📄 Base Paper Reference 
 
-**"Sparse Autoencoders Find Highly Interpretable Features in Language Models" — Hoagy Cunningham et al. (2023)**
+**"Sparse Autoencoders Find Highly Interpretable Features in Language Models" — Hoagy Cunningham et al. (2023)**  
 
-- This paper addresses *polysemanticity* in neural networks—where neurons respond to multiple unrelated features—by proposing sparse autoencoders to disentangle these features into more interpretable directions.
-- The authors use *sparse dictionary learning* to identify directions in activation space that reconstruct model activations using a small set of highly interpretable, monosemantic features.
-- Their method improves interpretability over traditional methods like PCA and ICA, validated using *autointerpretability scores* and *causal interventions* (like activation patching).
-- Case studies demonstrate that individual learned features correspond to specific linguistic patterns (e.g., apostrophes or legal terms), enabling detailed tracing of model behaviour through internal circuits.
+- This paper addresses *polysemanticity* in neural networks—where neurons respond to multiple unrelated features—by proposing sparse autoencoders to disentangle these features into more interpretable directions.  
+- Uses *sparse dictionary learning* to identify directions in activation space that reconstruct model activations with highly interpretable, monosemantic features.  
+- Improves interpretability over PCA/ICA, validated with *autointerpretability scores* and *causal interventions*.  
+- Case studies show individual learned features correspond to linguistic patterns (e.g., apostrophes, legal terms), enabling tracing of model behaviour through internal circuits.  
 
-*Paper Link*: [arXiv:2309.08600v3](https://arxiv.org/abs/2309.08600)
+📌 [arXiv:2309.08600v3](https://arxiv.org/abs/2309.08600)
